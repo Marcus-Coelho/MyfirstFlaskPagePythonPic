@@ -6,6 +6,7 @@ from comunidade.models import Usuario, Post
 from flask_login import login_user, logout_user
 from flask_login import current_user  # noqa: F401 # uso para verificar se usuário está logado
 from flask_login import login_required # uso para permitir acesso a páginas somente se usuário estiver logado
+from flask import send_from_directory
 from PIL import Image, ExifTags
 from datetime import datetime
 
@@ -281,6 +282,13 @@ def editar_post(post_id):  # Renomeado de `exibir_post` para `editar_post`
         return redirect(url_for('exibir_post', post_id=post.id))
 
     return render_template('editar_post.html', post=post, usuario=usuario, foto_usuario=foto_usuario, form=form)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, 'static'),
+        'favicon.ico', mimetype='image/vnd.microsoft.icon'
+    )
 
 
 
