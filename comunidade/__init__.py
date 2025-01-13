@@ -21,7 +21,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Define a página de login padrão
 login_manager.login_message_category = 'alert-info'  # Define a categoria das mensagens de login
 
-engine = sqlalchemy.create_engine(app.config('SQLALCHEMY_DATABASE_URI'))
+engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 inspector = sqlalchemy.inspect(engine)
 
 from comunidade import models
