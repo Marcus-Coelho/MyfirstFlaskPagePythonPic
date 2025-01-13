@@ -79,11 +79,11 @@ def login():
                 
                 else:
                  
-                 return redirect(url_for('home'))
+                 return redirect(url_for('home.html'))
             
             else:
                 flash('Usuário ou senha incorretos', 'alert-danger')
-    return render_template('login.html', form_login = form_login)
+    return render_template('home.html', form_login = form_login)
 
 @app.route('/criarconta', methods=['GET', 'POST'])
 def criarconta():
