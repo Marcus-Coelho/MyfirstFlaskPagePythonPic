@@ -57,33 +57,34 @@ def usuarios():
     
     return render_template('usuarios.html', lista_usuarios=lista_usuarios, posts_por_usuario=posts_por_usuario)
 
-
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form_login = FormLogin()
-    # logica do login
+    # Lógica do login
     if form_login.validate_on_submit() and 'botao_submit_login' in request.form:
-            usuario = Usuario.query.filter_by(email=form_login.email.data).first()
+        usuario = Usuario.query.filter_by(email=form_login.email.data).first()
 
-            if usuario and bcrypt.check_password_hash(usuario.senha, form_login.senha.data):
-                #fazer o login
-                login_user(usuario, remember=form_login.lembrar_dados.data)
-            
-                flash(f'Login feito com sucesso no e-mail: {form_login.email.data}', 'alert-primary')
-                parametro_next = request.args.get('next')
+        if usuario and bcrypt.check_password_hash(usuario.senha, form_login.senha.data):
+            # Fazer o login
+            login_user(usuario, remember=form_login.lembrar_dados.data)
 
-                if parametro_next:
-                    return redirect(parametro_next)
-                
-                else:
-                 
-                 return redirect(url_for('home.html'))
-            
+            flash(f'Login feito com sucesso no e-mail: {form_login.email.data}', 'alert-primary')
+
+            # Redireciona para a próxima página, se existir
+            parametro_next = request.args.get('next')
+            if parametro_next:
+                return redirect(parametro_next)
             else:
-                flash('Usuário ou senha incorretos', 'alert-danger')
-    return render_template('home.html', form_login = form_login)
+                return redirect(url_for('home'))  # Redireciona para a função 'home'
+
+        else:
+            flash('Usuário ou senha incorretos', 'alert-danger')
+
+    # Retorna a página de login (para GET e falhas no POST)
+    return render_template('login.html', form_login=form_login)
+
+            
+
 
 @app.route('/criarconta', methods=['GET', 'POST'])
 def criarconta():
