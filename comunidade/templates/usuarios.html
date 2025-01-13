@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+
+<div class="container usuarios-container" style="text-align: left;">
+    <h1>Usuários</h1>
+    <br>
+    <div>
+        {% for usuario_iten in lista_usuarios %}
+        <div class="container height-100" style="margin-left: 0; text-align: left;">
+            <div class="card text-left">
+                <div class="card p-3">
+                    <div class="d-flex align-items-center">
+                        <!-- Imagem do perfil -->
+                        <div class="image me-3">
+                            <img src="{{ url_for('static', filename='fotos_perfil/' + usuario_iten.foto_perfil) }}" 
+                                 class="rounded" width="155">
+                        </div>
+                        <!-- Informações do usuário -->
+                        <div class="ml-3 w-100">
+                            <h4 class="mb-0 mt-0">{{ usuario_iten.username }}</h4>
+                            <span>{{ usuario_iten.email }}</span>
+
+                            <!-- Estatísticas -->
+                            <div class="p-2 mt-2 d-flex justify-content-between rounded stats">
+                                <div class="d-flex flex-column">
+                                    <span class="articles">Posts</span>
+                                    <span class="number1">{{ posts_por_usuario[usuario_iten.id] }}</span>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <span class="Cursos">Cursos</span>
+                                    {% if usuario_iten.cursos == 'Não informado' %}
+                                    <span class="number2">0</span>
+                                    {% else %}
+                                    <span class="number2">{{ usuario_iten.cursos.count(';') + 1 }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <span class="rating">Rating</span>
+                                    <span class="number3">8.9</span>
+                                </div>
+                            </div>
+                            <!-- Botões -->
+                            <div class="button mt-2 d-flex flex-row align-items-center gap-2">
+                                <!-- <button class="btn btn-sm btn-outline-primary w-100">Editar</button> -->
+                                <button class="btn btn-sm btn-primary w-20">Follow</button>
+                            </div>
+
+                            <div class="cursos_matriculados_registrados">                        
+                                <!-- Insere os cursos -->            
+                                {% if usuario_iten.cursos == 'Não informado' %}                
+                                    <!-- não mostra nada -->            
+                                
+                                {% else %}
+                                
+                                <hr>
+                                <span class="cursos_matriculados-reg" style="font-weight: bold;">Cursos Matriculados</span>            
+                                   
+                                {% for iten in usuario_iten.cursos.split(';') %}
+                                    <div class="listagem_cursos">
+                                        {{  iten }}
+                                     </div>                
+                                    {% endfor %}            
+                    
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+

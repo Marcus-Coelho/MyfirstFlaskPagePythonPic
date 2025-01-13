@@ -1,0 +1,110 @@
+/* Card de perfil */
+.card {
+    width: 600px;
+    /* Aumenta a largura do card */
+    margin-left: 20px;
+    /* Espaçamento da margem esquerda */
+    border: none;
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 20px;
+    /* Espaçamento interno para o conteúdo */
+}
+
+/* Imagem do perfil */
+.image img {
+    margin-right: 10px;
+    margin-left: 5px;
+    /* Espaço maior entre imagem e texto */
+    width: 155px;
+    /* Largura fixa da imagem */
+    height: 155px;
+    /* Altura fixa da imagem */
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 1x;
+    position: relative;
+}
+
+/* Botões */
+.button {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    /* Espaçamento maior entre os botões */
+}
+
+.button .btn {
+    width: 48%;
+    /* Ajusta os botões para ocupar metade da largura disponível */
+}
+
+.container.height-100 {
+    margin-top: 10px;
+    /* Espaçamento vertical (de cima para baixo) */
+    margin-left: 10px;
+    /* Espaçamento horizontal (da margem esquerda) */
+    display: block;
+    /* Certifica-se de que o container seja tratado como bloco */
+    text-align: left; /* Garante que o texto dentro do container também esteja alinhado à esquerda */
+}
+
+.stats {
+    background-color: #f8fafc;
+    /* Fundo cinza claro suave */
+    color: #6c757d;
+    /* Texto em cinza escuro para bom contraste */
+    border-radius: 8px;
+    /* Bordas arredondadas */
+    padding: 10px;
+    /* Espaçamento interno */
+    font-family: Arial, sans-serif;
+    /* Fonte padrão */
+}
+
+/* Ajuste para títulos de estatísticas (Articles, Followers, Rating) */
+.stats span {
+    font-size: 12px;
+    /* Tamanho menor para os rótulos */
+    color: #adb5bd;
+    /* Cinza claro */
+    /* text-transform: uppercase; */
+    /* Texto em maiúsculas */
+    font-weight: 500;
+    /* Peso médio */
+}
+
+/* Ajuste para números */
+.stats .number1,
+.stats .number2,
+.stats .number3 {
+    font-size: 13px;
+    /* Tamanho maior para os números */
+    font-weight: bold;
+    /* Destaca os números */
+    color: #212529;
+    /* Cinza escuro */
+}
+
+.image-adjust {
+    margin-top: 1px;
+    
+}
+
+.h1-custom {
+    font-size: 1.2rem; /* Tamanho levemente maior */
+    font-weight: bold;
+    margin-top: 1rem; /* Afastamento do topo */
+    margin-bottom: 0.5rem;
+    margin-left: 1rem; /* Afastamento à esquerda */
+    color: #37922f;
+}
+
+.p-custom {
+    font-size: 1.1rem; /* Tamanho menor */
+    font-weight: bold;
+    margin-top: 0.5rem; /* Afastamento do topo */
+    margin-left: 1rem; /* Mesmo afastamento à esquerda */
+    color: #424344; /* Cor mais suave */
+}
+

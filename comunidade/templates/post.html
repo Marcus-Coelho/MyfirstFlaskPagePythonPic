@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card mt-3" style="max-width: 700px; background-color: #e3e9de; padding: 15px; border-radius: 8px;">
+        <div class="d-flex align-items-start">
+            <div class="me-3">
+                <img src="{{ url_for('static', filename='fotos_perfil/' + foto_usuario) }}"
+                     alt="Imagem do usuário" class="rounded" width="100" height="100">
+            </div>
+            <div class="w-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.titulo }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        Postado por {{ usuario.username }} em {{ post.data_criacao.strftime('%d-%m-%Y %H:%M') }}
+                    </h6>
+                    
+                    {% if current_user.id == post.id_usuario %}
+                    <div class="d-flex gap-2 mt-4">
+                        <!-- Botão para mostrar formulário de edição -->
+                        <button class="btn btn-warning btn-sm" onclick="mostrarFormulario()">Editar</button>
+                        
+                        <!-- Botão para abrir o modal de confirmação -->
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                            Excluir
+                        </button>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Corpo do post -->
+                    <p class="card-text mt-3">{{ post.corpo }}</p>
+
+                    {% if current_user.id == post.id_usuario %}
+                    <!-- Formulário de edição (invisível inicialmente) -->
+                    <div id="formularioEdicao" style="display: none; margin-top: 20px;">
+                        <form method="POST" action="{{ url_for('exibir_post', post_id=post.id) }}">
+                            {{ form.hidden_tag() }}
+                            <div class="mb-3">
+                                <label for="titulo" class="form-label">Título</label>
+                                {{ form.titulo(class_='form-control') }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="corpo" class="form-label">Assunto</label>
+                                {{ form.corpo(class_='form-control', rows=4) }}
+                            </div>
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                            <button id="botaoCancelar" type="button" class="btn btn-secondary" onclick="ocultarFormulario()">Cancelar</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmação de Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza de que deseja excluir este post? Esta ação não pode ser desfeita.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST" action="{{ url_for('excluir_post', post_id=post.id) }}">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para exibir o formulário de edição
+    function mostrarFormulario() {
+        const formulario = document.getElementById('formularioEdicao');
+        formulario.style.display = 'block';
+        formulario.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Função para ocultar o formulário de edição
+    function ocultarFormulario() {
+        const formulario = document.getElementById('formularioEdicao');
+        formulario.style.display = 'none';
+    }
+</script>
+{% endblock %}

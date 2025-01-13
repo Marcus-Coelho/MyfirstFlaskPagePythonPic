@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="h1-custom">Editar Postagem</h1>
+    <form method="POST" action="{{ url_for('editar_post', post_id=post.id) }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            {{ form.titulo(class_='form-control') }}
+        </div>
+        <div class="mb-3">
+            <label for="corpo" class="form-label">Assunto</label>
+            {{ form.corpo(class_='form-control', rows=4) }}
+        </div>
+        <button type="submit" class="btn btn-success">Atualizar</button>
+        <a href="{{ url_for('exibir_post', post_id=post.id) }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="container height-100">
+    <div class="card text-left"> <!-- Alinhamento à esquerda -->
+        <div class="card p-3">
+            <div class="d-flex align-items-left">
+                <!-- Imagem do perfil -->                
+                <div class="image me-3 image-adjust">
+                    <img src="{{ url_for('static', filename='fotos_perfil/' + current_user.foto_perfil) }}" 
+                        class="rounded" width="155">
+                </div>
+
+                <!-- Informações do usuário -->
+                <div class="ml-3 w-100">
+                    <h4 class="mb-0 mt-0">{{ current_user.username }}</h4>
+                    <span>{{ current_user.email }}</span>
+
+                    <!-- Estatísticas -->
+                    <div class="p-2 mt-2 d-flex justify-content-between rounded stats">
+                        <div class="d-flex flex-column">
+                            <span class="articles">Posts</span>
+                            <span class="number1">{{ quantidade_posts }}</span>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="Curos">Cursos</span>
+                            {% if current_user.cursos == 'Não informado' %}
+                            <span class="number2">0</span>
+                            {% else %}
+                            <span class="number2">{{current_user.cursos.count(';')+1}}</span>                            
+                            {% endif %}
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="rating">Rating</span>
+                            <span class="number3">8.9</span>
+                        </div>
+                    </div>                    
+                    <!-- Botões -->
+                    <div class="button mt-2 d-flex flex-row align-items-center gap-2"> <!-- Classe gap-2 adiciona espaço -->
+                        <button class="btn btn-sm btn-outline-primary w-100" onclick="toggleEdit()">Editar</button>
+                        <button class="btn btn-sm btn-primary w-100">Follow</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cursos_matriculados_registrados">                        
+            <!-- Insere os cursos -->            
+            {% if current_user.cursos == 'Não informado' %}                
+                <!-- não mostra nada -->            
+            
+            {% else %}
+            
+            <hr>
+            <span class="cursos_matriculados-reg" style="font-weight: bold;">Cursos Matriculados</span>            
+               
+            {% for iten in current_user.cursos.split(';') %}
+                <div class="listagem_cursos">
+                    {{  iten }}
+                 </div>                
+                {% endfor %}            
+
+            {% endif %}            
+
+        </div>
+
+        <!-- Formulário de edição -->
+        <div id="edit-section" class="p-3" style="display: none;">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <!-- Nome do Usuário -->
+                <div class="form-group">
+                    {{ form.username.label }}
+                    {{ form.username(class="form-control", value=current_user.username) }}
+                    
+                </div>
+                <!-- E-mail -->
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", value=current_user.email) }}
+                </div>
+                <!-- Foto de Perfil -->
+                <div class="form-group">
+                    {{ form.foto_perfil.label }}
+                    {{ form.foto_perfil(class="form-control") }}
+                </div>
+                <div class="cursos_matriculados">
+                    <hr>
+                    <span class="cursos_matriculados-s" style="font-weight: bold;">Cursos Matriculados</span>
+                    <!-- Insere os botoes -->
+                    {% for campo in form %}
+                        {% if  'curso_' in campo.name %}
+                        <div class="form-botoes_cursos">
+                            {{ campo(class="form-check-input") }}
+                            {{ campo.label(class="form-check-label") }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+
+                </div>
+                <!-- Botão Salvar -->
+                <div class="form-group mt-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleEdit() {
+        const editSection = document.getElementById('edit-section');
+        editSection.style.display = editSection.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+{% endblock %}
