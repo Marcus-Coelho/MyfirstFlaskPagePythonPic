@@ -94,7 +94,7 @@ def criarconta():
         # Criar usuário com os dados da instância do formulário
         
         # implantação de senha criptografada
-        senha_cryptografada = bcrypt.generate_password_hash(form_criar_conta.senha.data).decode('utf-8')
+        senha_cryptografada = bcrypt.generate_password_hash(form_criar_conta.senha.data).decode("utf-8")
         usuario = Usuario(
             username=form_criar_conta.username.data,  # Acessando dados da instância
             email=form_criar_conta.email.data,
