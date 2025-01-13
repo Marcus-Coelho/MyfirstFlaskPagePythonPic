@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import os
+import sqlalchemy
 
 app = Flask(__name__)
 
@@ -19,6 +20,19 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Define a página de login padrão
 login_manager.login_message_category = 'alert-info'  # Define a categoria das mensagens de login
+
+engine = sqlalchemy.create_engine(app.config('SQLALCHEMY_DATABASE_URI'))
+inspector = sqlalchemy.inspect(engine)
+
+from comunidade import models
+
+if not inspector.has_table('usuario'):
+    with app.app_context():
+        database.drop_all()
+        database.create_all()
+        print('Base de dados criada')
+else:
+    print('db já existente')
 
 
 from comunidade import routes  # noqa: E402, F401
