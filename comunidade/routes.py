@@ -6,8 +6,8 @@ from comunidade.models import Usuario, Post
 from flask_login import login_user, logout_user
 from flask_login import current_user  # noqa: F401 # uso para verificar se usuário está logado
 from flask_login import login_required # uso para permitir acesso a páginas somente se usuário estiver logado
-from flask import send_from_directory
-from PIL import Image, ExifTags
+from flask import send_from_directory, current_app
+from PIL import Image, ExifTags, ImageOps
 from datetime import datetime
 
 def atualizar_cursos(form):
@@ -117,6 +117,59 @@ def sair():
     flash('Logout success!', 'alert-success')
     return redirect(url_for('home'))
 
+# Opção 1: Função separada para processamento de imagem
+from PIL import Image, ImageOps
+import os
+from flask import current_app
+
+def process_profile_photo(photo_file, user_id, max_size=(155, 155)):
+    """
+    Processa e salva uma foto de perfil com tratamento adequado de orientação.
+    
+    Args:
+        photo_file: Arquivo de imagem do formulário
+        user_id: ID do usuário para o nome do arquivo
+        max_size: Tupla de (largura, altura) para tamanho máximo da imagem
+    
+    Returns:
+        str: Nome do arquivo salvo
+    """
+    try:
+        # Obter extensão do arquivo
+        extensao_arquivo = os.path.splitext(photo_file.filename)[1].lower()
+        
+        # Criar nome do arquivo
+        nome_arquivo = f'foto_perfil_{user_id}{extensao_arquivo}'
+        
+        # Criar caminho completo
+        caminho_arquivo = os.path.join(current_app.root_path, 'static/fotos_perfil', nome_arquivo)
+        
+        # Abrir e processar imagem
+        with Image.open(photo_file) as img:
+            # Aplicar correção de orientação
+            img = ImageOps.exif_transpose(img)
+            
+            # Converter para RGB se necessário (tratamento para PNGs com transparência)
+            if img.mode in ('RGBA', 'LA'):
+                background = Image.new('RGB', img.size, 'white')
+                background.paste(img, mask=img.split()[-1])
+                img = background
+            elif img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            # Redimensionar mantendo proporção
+            img.thumbnail(max_size, Image.Resampling.LANCZOS)
+            
+            # Salvar com qualidade otimizada
+            img.save(caminho_arquivo, 'JPEG', quality=85)
+            
+        return nome_arquivo
+        
+    except Exception as e:
+        print(f"Erro ao processar imagem: {e}")
+        raise
+
+# Opção 2: Rota com processamento integrado
 @app.route('/perfil', methods=['GET', 'POST'])
 @login_required
 def editaperfil():
@@ -140,46 +193,42 @@ def editaperfil():
             if extensao_arquivo not in formatos_permitidos:
                 flash('Formato de imagem não suportado. Por favor, envie uma imagem nos formatos JPG, PNG ou GIF.', 'alert-danger')
             else:
-                                            
-                nome_arquivo = f'foto_perfil_{current_user.id}{extensao_arquivo}' #exemplo foto_perfil_3.jpg
-                caminho_arquivo = os.path.join(app.root_path, 'static/fotos_perfil', nome_arquivo)
-
-                #reduzir o tamanho da foto
-                tamanho_imagem = (155,155)
-                foto_reduzida = Image.open(foto)
-
-                #########################################
-
                 try:
-                    # Aplicar a orientação correta, se houver metadados EXIF
-                    for tag in ExifTags.TAGS.keys():
-                        if ExifTags.TAGS[tag] == 'Orientation':
-                            orientation_tag = tag
-                            break
+                    # Opção 1: Usar a função separada
+                    novo_nome_arquivo = process_profile_photo(foto, current_user.id)
+                    current_user.foto_perfil = novo_nome_arquivo
+                    
+                    # Opção 2: Usar o processamento integrado
+                    """
+                    # Nome do arquivo com ID do usuário
+                    nome_arquivo = f'foto_perfil_{current_user.id}{extensao_arquivo}'
+                    caminho_arquivo = os.path.join(app.root_path, 'static/fotos_perfil', nome_arquivo)
 
-                    exif = foto_reduzida._getexif()
-                    if exif is not None and orientation_tag in exif:
-                        orientation = exif[orientation_tag]
-                        if orientation == 3:  # Rotação de 180°
-                            foto_reduzida = foto_reduzida.rotate(180, expand=True)
-                        elif orientation == 6:  # Rotação de 270° no sentido horário
-                            foto_reduzida = foto_reduzida.rotate(270, expand=True)
-                        elif orientation == 8:  # Rotação de 90° no sentido horário
-                            foto_reduzida = foto_reduzida.rotate(90, expand=True)
+                    # Reduzir o tamanho da foto
+                    tamanho_imagem = (155,155)
+                    
+                    with Image.open(foto) as foto_reduzida:
+                        foto_reduzida = ImageOps.exif_transpose(foto_reduzida)
+                        
+                        if foto_reduzida.mode in ('RGBA', 'LA'):
+                            background = Image.new('RGB', foto_reduzida.size, 'white')
+                            background.paste(foto_reduzida, mask=foto_reduzida.split()[-1])
+                            foto_reduzida = background
+                        elif foto_reduzida.mode != 'RGB':
+                            foto_reduzida = foto_reduzida.convert('RGB')
+                        
+                        foto_reduzida.thumbnail(tamanho_imagem, Image.Resampling.LANCZOS)
+                        foto_reduzida.save(caminho_arquivo, 'JPEG', quality=85)
+                        
+                    current_user.foto_perfil = nome_arquivo
+                    """
+
                 except Exception as e:
-                    print(f"Erro ao ajustar a orientação da imagem: {e}")
+                    print(f"Erro ao processar a imagem: {e}")
+                    flash('Erro ao processar a imagem. Por favor, tente novamente.', 'alert-danger')
 
-                
-                ###########################################
-                
-                foto_reduzida.thumbnail(tamanho_imagem)
-                foto_reduzida.save(caminho_arquivo)
-                current_user.foto_perfil = nome_arquivo
-
-        #atualizar o campo de cursos
-
+        # Atualizar o campo de cursos
         current_user.cursos = atualizar_cursos(form)
-
 
         # Salvar alterações no banco de dados
         database.session.commit()
