@@ -7,7 +7,7 @@ from flask_login import login_user, logout_user
 from flask_login import current_user  # noqa: F401 # uso para verificar se usuário está logado
 from flask_login import login_required # uso para permitir acesso a páginas somente se usuário estiver logado
 from flask import send_from_directory, current_app
-from PIL import Image, ExifTags, ImageOps
+from PIL import Image, ImageOps
 from datetime import datetime
 
 def atualizar_cursos(form):
@@ -118,9 +118,6 @@ def sair():
     return redirect(url_for('home'))
 
 # Opção 1: Função separada para processamento de imagem
-from PIL import Image, ImageOps
-import os
-from flask import current_app
 
 def process_profile_photo(photo_file, user_id, max_size=(155, 155)):
     """
