@@ -175,4 +175,4 @@ env/
 apagardadosdb.py
 
 # Ensure static files are not ignored
-!static/fotos_perfil/
+comunidade/static/fotos_perfil/*
