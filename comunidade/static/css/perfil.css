@@ -22,9 +22,22 @@
     /* Altura fixa da imagem */
     object-fit: cover;
     border-radius: 10px;
-    margin-top: 1x;
+    margin-top: 1px;
     position: relative;
 }
+.card.text-left {
+    margin-left: 0; /* Remove qualquer margem à esquerda */
+    padding-left: 10px; /* Opcional: Adiciona um pequeno espaçamento interno */
+    text-align: left; /* Alinha o conteúdo do texto à esquerda */
+}
+
+
+.card.p-3 {
+    margin-left: 0; /* Remove qualquer margem à esquerda */
+    padding-left: 10px; /* Opcional: Adiciona um pequeno espaçamento interno */
+    text-align: left; /* Alinha o conteúdo do texto à esquerda */
+}
+
 
 /* Botões */
 .button {
@@ -88,7 +101,6 @@
 
 .image-adjust {
     margin-top: 1px;
-    
 }
 
 .h1-custom {
@@ -108,3 +120,53 @@
     color: #424344; /* Cor mais suave */
 }
 
+/* Ajustes gerais para dispositivos móveis */
+@media (max-width: 576px) {
+    /* Card de perfil */
+    .card {
+        width: 100%; /* Ocupar toda a largura */
+        padding: 15px; /* Reduzir espaçamento interno */
+        margin-left: 5px; /* Pequeno espaçamento da borda */
+    }
+
+    /* Imagem do perfil */
+    .image img {
+        width: 120px; /* Reduzir largura */
+        height: 120px; /* Reduzir altura */
+    }
+
+    /* Ajuste de fontes */
+    .stats span {
+        font-size: 10px; /* Diminuir tamanho dos textos */
+    }
+
+    .stats .number1,
+    .stats .number2,
+    .stats .number3 {
+        font-size: 12px; /* Ajustar tamanho dos números */
+    }
+
+    .h1-custom {
+        font-size: 1rem; /* Reduzir tamanho do título */
+    }
+
+    .p-custom {
+        font-size: 0.9rem; /* Reduzir tamanho do subtítulo */
+    }
+
+    /* Botões */
+    .button .btn {
+        width: 100%; /* Botões ocupam toda a largura */
+        font-size: 0.9rem; /* Ajustar tamanho da fonte */
+    }
+
+    /* Ajuste para Navbar (menu de navegação) */
+    .navbar-toggler {
+        padding: 0.5rem 1rem; /* Aumentar área clicável */
+        font-size: 1.25rem; /* Ajustar tamanho do ícone */
+    }
+
+    .navbar-brand {
+        font-size: 1.1rem; /* Ajustar tamanho do texto da marca */
+    }
+}
