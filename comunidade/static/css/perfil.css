@@ -1,8 +1,8 @@
 /* Card de perfil */
 .card {
-    width: 600px;
+    width: 500px;
     /* Aumenta a largura do card */
-    margin-left: 20px;
+    margin-left: 5px;
     /* Espaçamento da margem esquerda */
     border: none;
     border-radius: 10px;
@@ -14,7 +14,7 @@
 /* Imagem do perfil */
 .image img {
     margin-right: 10px;
-    margin-left: 5px;
+    margin-left: 50px;
     /* Espaço maior entre imagem e texto */
     width: 155px;
     /* Largura fixa da imagem */
@@ -55,7 +55,7 @@
 .container.height-100 {
     margin-top: 10px;
     /* Espaçamento vertical (de cima para baixo) */
-    margin-left: 10px;
+    margin-left: 5px;
     /* Espaçamento horizontal (da margem esquerda) */
     display: block;
     /* Certifica-se de que o container seja tratado como bloco */
@@ -121,7 +121,7 @@
 }
 
 /* Ajustes gerais para dispositivos móveis */
-@media (max-width: 576px) {
+@media (max-width: 830px) {
     .card {
         width: 100%;
         padding: 10px;
