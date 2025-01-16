@@ -173,3 +173,7 @@ env/
 
 # Ignore apagardadosdb.py
 apagardadosdb.py
+
+# Ensure static files are not ignored
+!static/
+!static/fotos_perfil/
