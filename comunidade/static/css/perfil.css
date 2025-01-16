@@ -125,8 +125,8 @@
     /* Card de perfil */
     .card {
         width: 100%; /* Ocupar toda a largura */
-        padding: 15px; /* Reduzir espaçamento interno */
-        margin-left: 5px; /* Pequeno espaçamento da borda */
+        padding: 8px; /* Reduzir espaçamento interno */
+        margin-left: 2px; /* Pequeno espaçamento da borda */
     }
 
     /* Imagem do perfil */
@@ -137,7 +137,7 @@
 
     /* Ajuste de fontes */
     .stats span {
-        font-size: 10px; /* Diminuir tamanho dos textos */
+        font-size: 12px; /* Diminuir tamanho dos textos */
     }
 
     .stats .number1,
@@ -163,10 +163,10 @@
     /* Ajuste para Navbar (menu de navegação) */
     .navbar-toggler {
         padding: 0.5rem 1rem; /* Aumentar área clicável */
-        font-size: 1.25rem; /* Ajustar tamanho do ícone */
+        font-size: 1.8rem; /* Ajustar tamanho do ícone */
     }
 
     .navbar-brand {
-        font-size: 1.1rem; /* Ajustar tamanho do texto da marca */
+        font-size: 1.2rem; /* Ajustar tamanho do texto da marca */
     }
 }

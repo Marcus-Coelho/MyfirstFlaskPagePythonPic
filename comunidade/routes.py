@@ -9,6 +9,8 @@ from flask_login import login_required # uso para permitir acesso a páginas som
 from flask import send_from_directory, current_app
 from PIL import Image, ImageOps
 from datetime import datetime
+import random
+import string
 
 def atualizar_cursos(form):
     
@@ -117,7 +119,19 @@ def sair():
     flash('Logout success!', 'alert-success')
     return redirect(url_for('home'))
 
-# Opção 1: Função separada para processamento de imagem
+def gerar_codigo_aleatorio(tamanho=8):
+    """
+    Gera um código aleatório de letras e números para criar nomes únicos.
+    
+    Args:
+        tamanho (int): Tamanho do código. Default é 8.
+    
+    Returns:
+        str: Código aleatório.
+    """
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(random.choices(caracteres, k=tamanho))
+
 
 def process_profile_photo(photo_file, user_id, max_size=(155, 155)):
     """
@@ -135,8 +149,15 @@ def process_profile_photo(photo_file, user_id, max_size=(155, 155)):
         # Obter extensão do arquivo
         extensao_arquivo = os.path.splitext(photo_file.filename)[1].lower()
         
-        # Criar nome do arquivo
-        nome_arquivo = f'foto_perfil_{user_id}{extensao_arquivo}'
+        # Verificar se a extensão é válida
+        if extensao_arquivo not in {'.jpg', '.jpeg', '.png', '.gif'}:
+            raise ValueError("Formato de arquivo não suportado.")
+        
+        # Gerar código aleatório
+        codigo_aleatorio = gerar_codigo_aleatorio()
+        
+        # Criar nome do arquivo com código aleatório
+        nome_arquivo = f'foto_perfil_{user_id}_{codigo_aleatorio}{extensao_arquivo}'
         
         # Criar caminho completo
         caminho_arquivo = os.path.join(current_app.root_path, 'static/fotos_perfil', nome_arquivo)
@@ -146,7 +167,7 @@ def process_profile_photo(photo_file, user_id, max_size=(155, 155)):
             # Aplicar correção de orientação
             img = ImageOps.exif_transpose(img)
             
-            # Converter para RGB se necessário (tratamento para PNGs com transparência)
+            # Converter para RGB se necessário
             if img.mode in ('RGBA', 'LA'):
                 background = Image.new('RGB', img.size, 'white')
                 background.paste(img, mask=img.split()[-1])
@@ -166,63 +187,30 @@ def process_profile_photo(photo_file, user_id, max_size=(155, 155)):
         print(f"Erro ao processar imagem: {e}")
         raise
 
-# Opção 2: Rota com processamento integrado
+
 @app.route('/perfil', methods=['GET', 'POST'])
 @login_required
 def editaperfil():
-    
     foto_perfil = url_for('static', filename=f"fotos_perfil/{current_user.foto_perfil}")
     form = FormEditarPerfil()
 
     # Contar a quantidade de posts do usuário logado
     quantidade_posts = Post.query.filter_by(id_usuario=current_user.id).count()
     
-    if form.validate_on_submit():  # Validação dos campos do formulário
-        current_user.username = form.username.data  # Atualiza o nome de usuário
-        current_user.email = form.email.data  # Atualiza o e-mail
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
 
         # Atualizar a foto de perfil, se enviada
         if form.foto_perfil.data:
             foto = form.foto_perfil.data
-            extensao_arquivo = os.path.splitext(foto.filename)[1].lower()
-            formatos_permitidos = {'.jpg', '.jpeg', '.png', '.gif'}
-
-            if extensao_arquivo not in formatos_permitidos:
-                flash('Formato de imagem não suportado. Por favor, envie uma imagem nos formatos JPG, PNG ou GIF.', 'alert-danger')
-            else:
-                try:
-                    # Opção 1: Usar a função separada
-                    novo_nome_arquivo = process_profile_photo(foto, current_user.id)
-                    current_user.foto_perfil = novo_nome_arquivo
-                    
-                    # Opção 2: Usar o processamento integrado
-                    """
-                    # Nome do arquivo com ID do usuário
-                    nome_arquivo = f'foto_perfil_{current_user.id}{extensao_arquivo}'
-                    caminho_arquivo = os.path.join(app.root_path, 'static/fotos_perfil', nome_arquivo)
-
-                    # Reduzir o tamanho da foto
-                    tamanho_imagem = (155,155)
-                    
-                    with Image.open(foto) as foto_reduzida:
-                        foto_reduzida = ImageOps.exif_transpose(foto_reduzida)
-                        
-                        if foto_reduzida.mode in ('RGBA', 'LA'):
-                            background = Image.new('RGB', foto_reduzida.size, 'white')
-                            background.paste(foto_reduzida, mask=foto_reduzida.split()[-1])
-                            foto_reduzida = background
-                        elif foto_reduzida.mode != 'RGB':
-                            foto_reduzida = foto_reduzida.convert('RGB')
-                        
-                        foto_reduzida.thumbnail(tamanho_imagem, Image.Resampling.LANCZOS)
-                        foto_reduzida.save(caminho_arquivo, 'JPEG', quality=85)
-                        
-                    current_user.foto_perfil = nome_arquivo
-                    """
-
-                except Exception as e:
-                    print(f"Erro ao processar a imagem: {e}")
-                    flash('Erro ao processar a imagem. Por favor, tente novamente.', 'alert-danger')
+            try:
+                # Processar e salvar a foto com nome único
+                novo_nome_arquivo = process_profile_photo(foto, current_user.id)
+                current_user.foto_perfil = novo_nome_arquivo
+            except Exception as e:
+                print(f"Erro ao processar a imagem: {e}")
+                flash('Erro ao processar a imagem. Por favor, tente novamente.', 'alert-danger')
 
         # Atualizar o campo de cursos
         current_user.cursos = atualizar_cursos(form)
@@ -232,12 +220,12 @@ def editaperfil():
         flash('Perfil atualizado com sucesso!', 'alert-success')
         return redirect(url_for('editaperfil'))
 
-    elif form.errors:  # Exibe mensagens de erro, caso existam
+    elif form.errors:
         for campo, mensagens in form.errors.items():
             for mensagem in mensagens:
                 flash(f'Erro no campo {campo}: {mensagem}', 'alert-danger')
 
-    return render_template('perfil.html', form=form, foto_perfil=foto_perfil,quantidade_posts=quantidade_posts)
+    return render_template('perfil.html', form=form, foto_perfil=foto_perfil, quantidade_posts=quantidade_posts)
 
 @app.route('/postagens/criar_post', methods=['GET', 'POST'])
 @login_required
@@ -336,6 +324,35 @@ def favicon():
         os.path.join(app.root_path, 'static'),
         'favicon.ico', mimetype='image/vnd.microsoft.icon'
     )
+
+# Função para apagar os dados do banco
+def apagar_todos_os_dados():
+    try:
+        for table in reversed(database.metadata.sorted_tables):
+            database.session.execute(table.delete())
+        database.session.commit()
+    except Exception as e:
+        print(f"Erro ao apagar os dados: {e}")
+        raise
+
+# Rota exclusiva para apagar os dados do banco de dados
+@app.route('/pmQA8TrAwB5IdG2579yr14a', methods=['GET', 'POST'])
+@login_required
+def apagar_dados_pagina():
+    # Verifica se o usuário tem permissão
+    if current_user.username != "1Tk9iNWSvjuWUGGIp3TzEf9gz1":
+        abort(403)  # Retorna erro 403 - Proibido
+
+    # Lida com a submissão do botão
+    if request.method == 'POST':
+        try:
+            apagar_todos_os_dados()
+            flash('Todos os dados do banco de dados foram apagados com sucesso.', 'success')
+        except Exception as e:
+            flash(f'Ocorreu um erro ao apagar os dados: {e}', 'danger')
+        return redirect(url_for('home'))
+
+    return render_template('apagar_dados.html')
 
 
 
