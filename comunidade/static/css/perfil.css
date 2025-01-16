@@ -121,7 +121,7 @@
 }
 
 /* Ajustes gerais para dispositivos móveis */
-@media (max-width: 830px) {
+@media (max-width: 825px) {
     .card {
         width: 100%;
         padding: 10px;
