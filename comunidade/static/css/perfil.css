@@ -122,51 +122,29 @@
 
 /* Ajustes gerais para dispositivos móveis */
 @media (max-width: 576px) {
-    /* Card de perfil */
     .card {
-        width: 100%; /* Ocupar toda a largura */
-        padding: 8px; /* Reduzir espaçamento interno */
-        margin-left: 2px; /* Pequeno espaçamento da borda */
+        width: 100%;
+        padding: 10px;
+        margin: 5px;
     }
 
-    /* Imagem do perfil */
-    .image img {
-        width: 120px; /* Reduzir largura */
-        height: 120px; /* Reduzir altura */
-    }
-
-    /* Ajuste de fontes */
-    .stats span {
-        font-size: 12px; /* Diminuir tamanho dos textos */
-    }
-
-    .stats .number1,
-    .stats .number2,
-    .stats .number3 {
-        font-size: 12px; /* Ajustar tamanho dos números */
-    }
-
-    .h1-custom {
-        font-size: 1rem; /* Reduzir tamanho do título */
-    }
-
-    .p-custom {
-        font-size: 0.9rem; /* Reduzir tamanho do subtítulo */
-    }
-
-    /* Botões */
-    .button .btn {
-        width: 100%; /* Botões ocupam toda a largura */
-        font-size: 0.9rem; /* Ajustar tamanho da fonte */
-    }
-
-    /* Ajuste para Navbar (menu de navegação) */
     .navbar-toggler {
-        padding: 0.5rem 1rem; /* Aumentar área clicável */
-        font-size: 1.8rem; /* Ajustar tamanho do ícone */
+        padding: 0.8rem 1.2rem;
+        font-size: 1.5rem;
     }
 
-    .navbar-brand {
-        font-size: 1.2rem; /* Ajustar tamanho do texto da marca */
+    .image img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .button .btn {
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    body {
+        font-size: 14px;
+        line-height: 1.5;
     }
 }
